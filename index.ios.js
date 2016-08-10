@@ -1,27 +1,35 @@
+import formatTime from 'minutes-seconds-milliseconds';
 import React from 'react';
 import {
   Text,
   View,
+  TouchableHighlight,
   AppRegistry,
   StyleSheet
 } from 'react-native';
 
 var StopWatch = React.createClass ({
+
+  getInitialState: function() {
+    return {
+      timeElapsed: null
+    }
+  },
   render: function() {
 
-    return <View style={[styles.container, this.border('black')]}>{/* Container end */}
-      <View style={[styles.header, this.border('yellow')]}>{/* Header start */}
-        <View style={[this.border('red'), styles.timerWrapper]}>{/* Timer start */}
-          <Text>
-            00:00:00
+    return <View style={styles.container}>{/* Container end */}
+      <View style={styles.header}>{/* Header start */}
+        <View style={styles.timerWrapper}>{/* Timer start */}
+          <Text style={styles.timer}>
+            {formatTime(this.state.timeElapsed)}
           </Text>
         </View>{/* Timer end */}
-        <View style={[this.border('green'), styles.buttonWrapper]}>{/* Buttons start */}
+        <View style={styles.buttonWrapper}>{/* Buttons start */}
           {this.startStopButton()}
           {this.lapButton()}
         </View>{/* Buttons end */}
       </View>{/* Header end */}
-      <View style={[styles.footer, this.border('blue')]}>{/* Footer start */}
+      <View style={styles.footer}>{/* Footer start */}
         <Text>
           I am a list of laps.
         </Text>
@@ -29,24 +37,33 @@ var StopWatch = React.createClass ({
     </View> // Container end
   },
   startStopButton: function () {
-    return <View>
+    return <TouchableHighlight
+      underlayColor="grey"
+      onPress={this.handleStartPress}
+      style={[styles.button, styles.startStopButton]}
+      >
       <Text>
         Start
       </Text>
-    </View>
+    </TouchableHighlight>
   },
   lapButton: function() {
-    return <View>
+    return <View style={styles.button}>
       <Text>
         Lap
       </Text>
     </View>
   },
-  border: function (color) {
-    return {
-      borderColor: color,
-      borderWidth: 4
-    }
+  handleStartPress: function() {
+    var startTime = new Date();
+
+
+    setInterval(() => {
+      // Update state with new value
+      this.setState({
+        timeElapsed: new Date() - startTime
+      });
+    }, 30);
   }
 });
 
@@ -71,7 +88,24 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center'
+  },
+  timer: {
+    fontSize: 60
+  },
+  button: {
+    borderWidth: 2,
+    height: 100,
+    width: 100,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  startStopButton: {
+    borderColor: '#00CC00'
   }
+
 });
+
+
 
 AppRegistry.registerComponent('stopwatch', () => StopWatch);
